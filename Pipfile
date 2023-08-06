@@ -8,6 +8,8 @@ django = "*"
 djangorestframework = "*"
 psycopg2 = "*"
 pillow = "*"
+djoser = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 python-decouple = "*"
