@@ -48,7 +48,7 @@ class RecipeIngredient(models.Model):
     custom_name = models.CharField(max_length=255, blank=True, null=True)
     custom_image = models.ImageField(upload_to='images/ingredients/', blank=True, null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    unit = models.CharField(max_length=255)
+    unit = models.CharField(max_length=255, blank=True, null=True)
     
     def __str__(self):
         return f"{self.ingredient.name} ({self.amount} {self.unit})"
