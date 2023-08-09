@@ -56,3 +56,19 @@ class RecipeIngredient(models.Model):
     class Meta:
         verbose_name = 'Recipe Ingredient'
         verbose_name_plural = 'Recipe Ingredients'
+
+
+class Comment(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(user, on_delete=models.CASCADE)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.recipe.title}"
+    
+    class Meta:
+        ordering = ['created_at']
+        verbose_name = 'Comment'
+        verbose_name_plural = 'Comments'

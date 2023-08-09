@@ -52,3 +52,10 @@ class IngredientAdmin(admin.ModelAdmin):
                 f'<img src="{obj.image.url}" style="max-width: 200px; max-height: 200px; object-fit: cover;" />'
             )
         return "No image"
+
+
+@admin.register(models.Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ["user", "recipe", "created_at", "modified_at"]
+    search_fields = ["user__username", "recipe__title"]
+    readonly_fields = ["created_at", "modified_at"]
