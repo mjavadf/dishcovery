@@ -1,7 +1,6 @@
 from django.shortcuts import render
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
-from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from .models import Recipe, Ingredient, Comment
 from .serializers import CommentSerializer, RecipeSerializer, IngredientSerializer
@@ -51,4 +50,19 @@ class CommentViewSet(ModelViewSet):
     
     def get_queryset(self):
         return Comment.objects.filter(recipe_id=self.kwargs["recipe_pk"])
+    
+    def get_permissions(self):
+        match self.action:
+            case "create":
+                permission_classes = [IsAuthenticated]
+            case "update" | "partial_update":
+                permission_classes = [IsOwner]
+            case "retrieve" | "list":
+                permission_classes = []
+            case "destroy":
+                permission_classes = [IsOwner | IsAdminUser]
+            case _:
+                permission_classes = [IsAuthenticated]
+
+        return [permission() for permission in permission_classes]
     
