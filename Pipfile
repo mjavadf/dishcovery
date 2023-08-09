@@ -10,6 +10,7 @@ psycopg2 = "*"
 pillow = "*"
 djoser = "*"
 djangorestframework-simplejwt = "*"
+drf-nested-routers = "*"
 
 [dev-packages]
 python-decouple = "*"
