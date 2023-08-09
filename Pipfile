@@ -11,6 +11,7 @@ pillow = "*"
 djoser = "*"
 djangorestframework-simplejwt = "*"
 drf-nested-routers = "*"
+django-filter = "*"
 
 [dev-packages]
 python-decouple = "*"
