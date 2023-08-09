@@ -1,15 +1,22 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Recipe, Ingredient, Comment
 from .serializers import CommentSerializer, RecipeSerializer, IngredientSerializer
 from .permissions import IsAuthenticatedOrReadOnly, IsOwner
+from .filters import RecipeFilter
 
 
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = RecipeFilter
+    search_fields = ["title", "description"]
+    ordering_fields = ["created_at", "time_minutes"]
 
     def get_permissions(self):
         match self.action:
