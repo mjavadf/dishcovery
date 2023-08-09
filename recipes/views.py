@@ -11,7 +11,7 @@ from .filters import RecipeFilter
 
 
 class RecipeViewSet(ModelViewSet):
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.prefetch_related('ingredients').all()
     serializer_class = RecipeSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = RecipeFilter
