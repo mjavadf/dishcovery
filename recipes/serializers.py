@@ -19,16 +19,16 @@ class RecipeIngredientSimpleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RecipeIngredient
-        fields = ["name", "amount", "unit", "image"]
+        fields = ["id", "name", "amount", "unit", "image"]
 
 
 class RecipeSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientSimpleSerializer(many=True)
-
-    # TODO: add id field
+    
     class Meta:
         model = Recipe
         fields = [
+            "id",
             "user",
             "title",
             "time_minutes",
@@ -62,6 +62,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = [
+            "id",
             "user",
             "recipe",
             "comment",
