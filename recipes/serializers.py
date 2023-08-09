@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Recipe, Ingredient, RecipeIngredient
+from .models import Recipe, Ingredient, RecipeIngredient, Comment
 
 
 class RecipeIngredientSimpleSerializer(serializers.ModelSerializer):
@@ -24,6 +24,7 @@ class RecipeIngredientSimpleSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientSimpleSerializer(many=True)
+
     # TODO: add id field
     class Meta:
         model = Recipe
@@ -43,16 +44,32 @@ class IngredientSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True)
     modified_at = serializers.DateTimeField(read_only=True)
     created_by = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = Ingredient
-        fields = [
-            "id",
-            "name",
-            "image",
-            "created_at",
-            "modified_at",
-            "created_by"
-        ]
-    
+        fields = ["id", "name", "image", "created_at", "modified_at", "created_by"]
+
     def create(self, validated_data):
         return super().create(validated_data, created_by=self.context["user"])
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(read_only=True)
+    modified_at = serializers.DateTimeField(read_only=True)
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    recipe = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = [
+            "user",
+            "recipe",
+            "comment",
+            "created_at",
+            "modified_at",
+        ]
+
+    def create(self, validated_data):
+        recipe_id = self.context["recipe_id"]
+        user = self.context["request"].user
+        return Comment.objects.create(recipe_id=recipe_id, user=user, **validated_data)

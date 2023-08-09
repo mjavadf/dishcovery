@@ -3,8 +3,8 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Recipe, Ingredient
-from .serializers import RecipeSerializer, IngredientSerializer
+from .models import Recipe, Ingredient, Comment
+from .serializers import CommentSerializer, RecipeSerializer, IngredientSerializer
 from .permissions import IsAuthenticatedOrReadOnly, IsOwner
 
 
@@ -39,3 +39,16 @@ class IngredientViewSet(ModelViewSet):
     def get_context_data(self, **kwargs):
         context = {"user": self.request.user}
         return context
+
+
+class CommentViewSet(ModelViewSet):
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    
+    def get_serializer_context(self):
+        return {"request": self.request,
+                "recipe_id": self.kwargs["recipe_pk"],}
+    
+    def get_queryset(self):
+        return Comment.objects.filter(recipe_id=self.kwargs["recipe_pk"])
+    
