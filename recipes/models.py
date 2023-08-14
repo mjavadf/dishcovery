@@ -72,3 +72,19 @@ class Comment(models.Model):
         ordering = ['created_at']
         verbose_name = 'Comment'
         verbose_name_plural = 'Comments'
+        
+        
+class Profile(models.Model):
+    user = models.OneToOneField(user, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='images/profiles/', blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.user.username
+    
+    class Meta:
+        ordering = ['created_at']
+        verbose_name = 'Profile'
+        verbose_name_plural = 'Profiles'
