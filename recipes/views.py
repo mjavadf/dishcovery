@@ -8,6 +8,7 @@ from .models import Recipe, Ingredient, Comment
 from .serializers import CommentSerializer, RecipeSerializer, IngredientSerializer
 from .permissions import IsAuthenticatedOrReadOnly, IsOwner
 from .filters import RecipeFilter
+from .pagination import DefaultPagination
 
 
 class RecipeViewSet(ModelViewSet):
@@ -17,6 +18,7 @@ class RecipeViewSet(ModelViewSet):
     filterset_class = RecipeFilter
     search_fields = ["title", "description"]
     ordering_fields = ["created_at", "time_minutes"]
+    pagination_class = DefaultPagination
 
     def get_permissions(self):
         match self.action:
@@ -41,6 +43,7 @@ class IngredientViewSet(ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    pagination_class = DefaultPagination
 
     def get_context_data(self, **kwargs):
         context = {"user": self.request.user}
