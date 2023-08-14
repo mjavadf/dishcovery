@@ -59,3 +59,19 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ["user", "recipe", "created_at", "modified_at"]
     search_fields = ["user__username", "recipe__title"]
     readonly_fields = ["created_at", "modified_at"]
+    
+
+@admin.register(models.Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ["user", "created_at", "modified_at"]
+    readonly_fields = ["thumbnail", "created_at", "modified_at"]
+    search_fields = ["user__username"]
+    list_filter = ["created_at", "modified_at"]
+    ordering = ["-created_at"]
+    
+    def thumbnail(self, obj):
+        if obj.image.name != "":
+            return format_html(
+                f'<img src="{obj.image.url}" style="max-width: 200px; max-height: 200px; object-fit: cover;" />'
+            )
+        return "No image"
