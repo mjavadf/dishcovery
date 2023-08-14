@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib import admin
 
 user = settings.AUTH_USER_MODEL
 
@@ -82,9 +83,18 @@ class Profile(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.user.username
+        return f'{self.user.first_name} {self.user.last_name}'
+    
+    @admin.display(ordering='user__first_name', description='First Name')
+    def first_name(self):
+        return self.user.first_name
+    
+    @admin.display(ordering='user__last_name', description='Last Name')
+    def last_name(self):
+        return self.user.last_name
+    
     
     class Meta:
-        ordering = ['created_at']
+        ordering = ['user__first_name', 'user__last_name']
         verbose_name = 'Profile'
         verbose_name_plural = 'Profiles'
