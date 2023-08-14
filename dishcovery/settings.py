@@ -155,3 +155,9 @@ SIMPLE_JWT = {
 if DEBUG == True:
     SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"] = timedelta(days=7)
     SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"] = timedelta(days=7)
+    
+DJOSER = {
+    'SERIALIZERS': {
+        'user_create': 'core.serializers.UserCreateSerializer',
+    }
+}
