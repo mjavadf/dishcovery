@@ -68,6 +68,7 @@ class ProfileAdmin(admin.ModelAdmin):
     search_fields = ["user__username"]
     list_filter = ["created_at", "modified_at"]
     ordering = ["-created_at"]
+    autocomplete_fields = ["user"]
     
     def thumbnail(self, obj):
         if obj.image.name != "":
