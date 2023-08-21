@@ -79,6 +79,7 @@ class Profile(models.Model):
     user = models.OneToOneField(user, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/profiles/', blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
+    phone_number = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     

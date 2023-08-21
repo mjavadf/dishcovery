@@ -64,7 +64,7 @@ class CommentAdmin(admin.ModelAdmin):
 @admin.register(models.Profile)
 class ProfileAdmin(admin.ModelAdmin):
     list_select_related = ["user"]
-    list_display = ["first_name", "last_name", "created_at", "modified_at"]
+    list_display = ["first_name", "last_name", "phone_number", "created_at", "modified_at"]
     readonly_fields = ["thumbnail", "created_at", "modified_at"]
     search_fields = ["user__username"]
     list_filter = ["created_at", "modified_at"]

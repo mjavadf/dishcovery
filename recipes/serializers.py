@@ -80,4 +80,4 @@ class ProfileSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Profile
-        fields = ["id", "user", "image", "bio",]
+        fields = ["id", "user", "image", "bio", "phone_number",]
