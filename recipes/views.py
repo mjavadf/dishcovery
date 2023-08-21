@@ -1,11 +1,13 @@
 from django.shortcuts import render
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Recipe, Ingredient, Comment
-from .serializers import CommentSerializer, RecipeSerializer, IngredientSerializer
+from .models import Profile, Recipe, Ingredient, Comment
+from .serializers import CommentSerializer, ProfileSerializer, RecipeSerializer, IngredientSerializer
 from .permissions import IsAuthenticatedOrReadOnly, IsOwner
 from .filters import RecipeFilter
 from .pagination import DefaultPagination
@@ -76,3 +78,30 @@ class CommentViewSet(ModelViewSet):
 
         return [permission() for permission in permission_classes]
     
+    
+class ProfileViewSet(ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    
+    def get_permissions(self):
+        match self.action:
+            case "update" | "partial_update":
+                permission_classes = [IsOwner]
+            case 'me':
+                permission_classes = [IsAuthenticated]
+            case _:
+                permission_classes = [IsAdminUser]
+
+        return [permission() for permission in permission_classes]
+    
+    @action(detail=False, methods=["GET", "PUT"], permission_classes=[IsAuthenticated])
+    def me(self, request):
+        profile = Profile.objects.get(user_id=request.user.id)
+        if request.method == "GET":
+            serializer = ProfileSerializer(profile)
+            return Response(serializer.data)
+        else:
+            serializer = ProfileSerializer(profile, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)

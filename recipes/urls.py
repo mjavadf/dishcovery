@@ -4,6 +4,7 @@ from . import views
 router = routers.DefaultRouter()
 router.register('recipes', views.RecipeViewSet, basename='recipes')
 router.register('ingredients', views.IngredientViewSet, basename='ingredients')
+router.register('profiles', views.ProfileViewSet, basename='profiles')
 
 recipe_router = routers.NestedDefaultRouter(router, 'recipes', lookup='recipe')
 recipe_router.register('comments', views.CommentViewSet, basename='recipe-comments')

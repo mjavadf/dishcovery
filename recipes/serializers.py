@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Recipe, Ingredient, RecipeIngredient, Comment
+from .models import Profile, Recipe, Ingredient, RecipeIngredient, Comment
 
 
 class RecipeIngredientSimpleSerializer(serializers.ModelSerializer):
@@ -74,3 +74,10 @@ class CommentSerializer(serializers.ModelSerializer):
         recipe_id = self.context["recipe_id"]
         user = self.context["request"].user
         return Comment.objects.create(recipe_id=recipe_id, user=user, **validated_data)
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    class Meta:
+        model = Profile
+        fields = ["id", "user", "image", "bio",]
