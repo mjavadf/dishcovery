@@ -6,15 +6,13 @@ name = "pypi"
 [packages]
 django = "*"
 djangorestframework = "*"
-psycopg2 = "*"
 pillow = "*"
 djoser = "*"
 djangorestframework-simplejwt = "*"
 drf-nested-routers = "*"
 django-filter = "*"
-
-[dev-packages]
 python-decouple = "*"
+psycopg2-binary = "*"
 
 [requires]
 python_version = "3.11"
