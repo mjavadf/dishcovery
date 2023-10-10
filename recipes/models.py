@@ -5,6 +5,16 @@ from django.contrib import admin
 user = settings.AUTH_USER_MODEL
 
 class Ingredient(models.Model):
+    """
+    A model representing an ingredient used in a recipe.
+
+    Attributes:
+        name (str): The name of the ingredient.
+        image (ImageField): An image of the ingredient.
+        created_at (DateTimeField): The date and time the ingredient was created.
+        modified_at (DateTimeField): The date and time the ingredient was last modified.
+        created_by (ForeignKey): The user who created the ingredient.
+    """
     name = models.CharField(max_length=255, unique=True)
     image = models.ImageField(upload_to='images/ingredients/')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -21,7 +31,18 @@ class Ingredient(models.Model):
     
 
 class Recipe(models.Model):
-    """Recipe object"""
+    """
+    A model representing a recipe.
+
+    Attributes:
+        user (ForeignKey): The user who created the recipe.
+        title (CharField): The title of the recipe.
+        time_minutes (IntegerField): The time required to prepare the recipe in minutes.
+        description (TextField): The description of the recipe.
+        image (ImageField): The image of the recipe.
+        created_at (DateTimeField): The date and time when the recipe was created.
+        modified_at (DateTimeField): The date and time when the recipe was last modified.
+    """
     user = models.ForeignKey(
         user,
         on_delete=models.CASCADE
@@ -44,6 +65,17 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
+    """
+    A model representing an ingredient used in a recipe.
+
+    Attributes:
+        ingredient (ForeignKey): The ingredient used in the recipe.
+        recipe (ForeignKey): The recipe that uses the ingredient.
+        custom_name (CharField): A custom name for the ingredient (optional).
+        custom_image (ImageField): An image of the ingredient (optional).
+        amount (DecimalField): The amount of the ingredient used in the recipe.
+        unit (CharField): The unit of measurement for the ingredient amount (optional).
+    """
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name="recipes")
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="ingredients")
     custom_name = models.CharField(max_length=255, blank=True, null=True)
@@ -60,6 +92,16 @@ class RecipeIngredient(models.Model):
 
 
 class Comment(models.Model):
+    """
+    Model representing a comment on a recipe.
+
+    Attributes:
+        recipe (ForeignKey to Recipe): The recipe to which the comment belongs.
+        user (ForeignKey to User): The user who wrote the comment.
+        comment (TextField): The text content of the comment.
+        created_at (DateTimeField): The timestamp indicating when the comment was created.
+        modified_at (DateTimeField): The timestamp indicating when the comment was last modified.
+    """
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="comments")
     user = models.ForeignKey(user, on_delete=models.CASCADE)
     comment = models.TextField()
@@ -76,6 +118,17 @@ class Comment(models.Model):
         
         
 class Profile(models.Model):
+    """
+    A model representing a user profile.
+
+    Attributes:
+        user (User): A one-to-one field to the User model.
+        image (ImageField): An image field for the user's profile picture.
+        bio (TextField): A text field for the user's bio.
+        phone_number (CharField): A char field for the user's phone number.
+        created_at (DateTimeField): A date time field for the creation date of the profile.
+        modified_at (DateTimeField): A date time field for the last modification date of the profile.
+    """
     user = models.OneToOneField(user, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/profiles/', blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
