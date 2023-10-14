@@ -14,6 +14,7 @@ from .pagination import DefaultPagination
 
 
 class RecipeViewSet(ModelViewSet):
+    # prefetch_related() is used to reduce the number of queries made to the database.
     queryset = Recipe.objects.prefetch_related('ingredients').all()
     serializer_class = RecipeSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -23,14 +24,19 @@ class RecipeViewSet(ModelViewSet):
     pagination_class = DefaultPagination
 
     def get_permissions(self):
+        # The permissions are determined by the action being performed.
         match self.action:
             case "create":
+                # Only authenticated users can create recipes.
                 permission_classes = [IsAuthenticated]
             case "update" | "partial_update" | "destroy":
+                # Only the recipe's owner or an admin can update or delete a recipe.
                 permission_classes = [IsOwner]
             case "retrieve" | "list":
+                # Anyone can view a recipe.
                 permission_classes = []
             case _:
+                # Only authenticated users can perform other actions.
                 permission_classes = [IsAuthenticated]
 
         return [permission() for permission in permission_classes]

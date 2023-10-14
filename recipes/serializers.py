@@ -3,6 +3,17 @@ from .models import Profile, Recipe, Ingredient, RecipeIngredient, Comment
 
 
 class RecipeIngredientSimpleSerializer(serializers.ModelSerializer):
+    """
+    A serializer for the RecipeIngredient model that returns a simplified representation of the ingredient.
+
+    The serializer includes the ingredient's ID, name, amount, unit, and image. If a custom name or image is available,
+    it will be used instead of the default values.
+
+    Methods:
+    - get_name: Returns the ingredient's custom name if available, otherwise returns the default name.
+    - get_image: Returns the ingredient's custom image if available, otherwise returns the default image.
+    """
+
     name = serializers.SerializerMethodField(method_name="get_name", read_only=True)
     image = serializers.SerializerMethodField(method_name="get_image", read_only=True)
 
@@ -23,6 +34,9 @@ class RecipeIngredientSimpleSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Recipe model. Includes nested serialization for RecipeIngredientSimpleSerializer.
+    """
     ingredients = RecipeIngredientSimpleSerializer(many=True)
     
     class Meta:
@@ -41,6 +55,9 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Ingredient model.
+    """
     created_at = serializers.DateTimeField(read_only=True)
     modified_at = serializers.DateTimeField(read_only=True)
     created_by = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -50,10 +67,33 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "image", "created_at", "modified_at", "created_by"]
 
     def create(self, validated_data):
+        """
+        Create a new ingredient instance.
+
+        Args:
+            validated_data (dict): The validated data for the new ingredient.
+
+        Returns:
+            Ingredient: The newly created ingredient instance.
+        """
         return super().create(validated_data, created_by=self.context["user"])
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Comment model.
+
+    Fields:
+    - id: The ID of the comment.
+    - user: The user who created the comment.
+    - recipe: The recipe the comment belongs to.
+    - comment: The comment text.
+    - created_at: The date and time the comment was created.
+    - modified_at: The date and time the comment was last modified.
+
+    Methods:
+    - create: Creates a new comment instance.
+    """
     created_at = serializers.DateTimeField(read_only=True)
     modified_at = serializers.DateTimeField(read_only=True)
     user = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -77,6 +117,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Profile model.
+    """
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Profile

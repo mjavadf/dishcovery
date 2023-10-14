@@ -4,6 +4,7 @@ from django.dispatch import receiver
 from django.conf import settings
 from .models import Profile
 
+# This signal is used to create a profile for each new user
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_profle_for_new_user(sender, created, instance, **kwargs):
     if created:
