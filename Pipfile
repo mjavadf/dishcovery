@@ -13,6 +13,7 @@ drf-nested-routers = "*"
 django-filter = "*"
 python-decouple = "*"
 psycopg2-binary = "*"
+markdown = "*"
 
 [requires]
 python_version = "3.11"
