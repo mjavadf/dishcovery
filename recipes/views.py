@@ -7,7 +7,7 @@ from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Profile, Recipe, Ingredient, Comment
-from .serializers import CommentSerializer, ProfileSerializer, RecipeSerializer, IngredientSerializer
+from .serializers import CommentSerializer, ProfileSerializer, RecipeCreateSerializer, RecipeSerializer, IngredientSerializer
 from .permissions import IsAuthenticatedOrReadOnly, IsOwner
 from .filters import RecipeFilter
 from .pagination import DefaultPagination
@@ -40,10 +40,18 @@ class RecipeViewSet(ModelViewSet):
                 permission_classes = [IsAuthenticated]
 
         return [permission() for permission in permission_classes]
+    
+    def get_serializer_class(self):
+        match self.action:
+            case "create" | "update" | "partial_update":
+                serializer_class = RecipeCreateSerializer
+            case _:
+                serializer_class = RecipeSerializer
+        
+        return serializer_class
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["request"] = self.request
+        ontext = {"request": self.request}
         return context
 
 
@@ -54,7 +62,7 @@ class IngredientViewSet(ModelViewSet):
     pagination_class = DefaultPagination
 
     def get_context_data(self, **kwargs):
-        context = {"user": self.request.user}
+        context = {"request": self.request}
         return context
 
 

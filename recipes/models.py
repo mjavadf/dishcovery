@@ -6,7 +6,7 @@ user = settings.AUTH_USER_MODEL
 
 class Ingredient(models.Model):
     """
-    A model representing an ingredient used in a recipe.
+    A model representing an ingredient.
 
     Attributes:
         name (str): The name of the ingredient.
@@ -50,7 +50,7 @@ class Recipe(models.Model):
     title = models.CharField(max_length=255)
     time_minutes = models.IntegerField()
     description = models.TextField()
-    image = models.ImageField(upload_to='images/recipes/')
+    image = models.ImageField(upload_to='images/recipes/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     

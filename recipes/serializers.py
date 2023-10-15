@@ -37,8 +37,10 @@ class RecipeSerializer(serializers.ModelSerializer):
     """
     Serializer for the Recipe model. Includes nested serialization for RecipeIngredientSimpleSerializer.
     """
+
     ingredients = RecipeIngredientSimpleSerializer(many=True)
-    
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = Recipe
         fields = [
@@ -54,10 +56,60 @@ class RecipeSerializer(serializers.ModelSerializer):
         ]
 
 
+class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the RecipeIngredient model.
+    """
+    recipe = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = RecipeIngredient
+        fields = [
+            "id",
+            "recipe",
+            "ingredient",
+            "amount",
+            "unit",
+            "custom_name",
+            "custom_image",
+        ]
+        
+
+class RecipeCreateSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    ingredients = RecipeIngredientCreateSerializer(many=True)
+    
+    class Meta:
+        model = Recipe
+        fields = [
+            "id",
+            "user",
+            "title",
+            "time_minutes",
+            "description",
+            "image",
+            "created_at",
+            "modified_at",
+            "ingredients",
+        ]
+        
+    def create(self, validated_data):
+        ingredients_data = validated_data.pop('ingredients')
+        user = self.context["request"].user
+        recipe = Recipe.objects.create(user = user, **validated_data)
+
+        for ingredient_data in ingredients_data:
+            ingredient_data['recipe'] = recipe
+            RecipeIngredient.objects.create(**ingredient_data)
+
+        return recipe
+
+
 class IngredientSerializer(serializers.ModelSerializer):
     """
     Serializer for Ingredient model.
     """
+
     created_at = serializers.DateTimeField(read_only=True)
     modified_at = serializers.DateTimeField(read_only=True)
     created_by = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -76,7 +128,11 @@ class IngredientSerializer(serializers.ModelSerializer):
         Returns:
             Ingredient: The newly created ingredient instance.
         """
-        return super().create(validated_data, created_by=self.context["user"])
+        user = self.context["request"].user
+        ingredient = super().create(validated_data)
+        ingredient.created_by = user
+        ingredient.save()
+        return ingredient
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -94,6 +150,7 @@ class CommentSerializer(serializers.ModelSerializer):
     Methods:
     - create: Creates a new comment instance.
     """
+
     created_at = serializers.DateTimeField(read_only=True)
     modified_at = serializers.DateTimeField(read_only=True)
     user = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -120,7 +177,15 @@ class ProfileSerializer(serializers.ModelSerializer):
     """
     Serializer for the Profile model.
     """
+
     user = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = Profile
-        fields = ["id", "user", "image", "bio", "phone_number",]
+        fields = [
+            "id",
+            "user",
+            "image",
+            "bio",
+            "phone_number",
+        ]
